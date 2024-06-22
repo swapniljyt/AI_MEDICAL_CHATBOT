@@ -21,7 +21,7 @@ list_of_files = [
 
 
 for filepath in list_of_files:
-   filepath = Path(filepath)
+   filepath = Path(filepath)#convert the path according to windows operating system
    filedir, filename = os.path.split(filepath)
 
    if filedir !="":
