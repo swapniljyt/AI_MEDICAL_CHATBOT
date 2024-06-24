@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from src.helper import download_hugging_face_embeddings
 from langchain.vectorstores import Pinecone
+from langchain.vectorstores import Pinecone as LangchainPinecone
 import pinecone
 from langchain.prompts import PromptTemplate
 from langchain.llms import CTransformers
@@ -13,13 +14,13 @@ app = Flask(__name__)
 
 load_dotenv()
 
-PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
+PINECONE_API_KEY =os.getenv("PINECONE_API_KEY")
 
 embeddings = download_hugging_face_embeddings()
 
 #Initializing the Pinecone
 index_name = "medical-chatbot"
-pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+pc = Pinecone(PINECONE_API_KEY)
 if index_name not in pc.list_indexes().names():
     pc.create_index(
         name=index_name,
