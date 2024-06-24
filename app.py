@@ -1,5 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from src.helper import download_hugging_face_embeddings
+from src.helper import load_pdf, text_split, download_hugging_face_embeddings
+from src.docsearch import create_docsearch
 from langchain.vectorstores import Pinecone
 from langchain.vectorstores import Pinecone as LangchainPinecone
 import pinecone
@@ -14,31 +16,15 @@ app = Flask(__name__)
 
 load_dotenv()
 
-PINECONE_API_KEY =os.getenv("PINECONE_API_KEY")
-
+extracted_data = load_pdf("/root/src/AI_MEDICAL_CHATBOT/data/Medical_book.pdf")
+text_chunks = text_split(extracted_data)
 embeddings = download_hugging_face_embeddings()
 
-#Initializing the Pinecone
+PINECONE_API_KEY =os.getenv("PINECONE_API_KEY")
+
 index_name = "medical-chatbot"
-pc = Pinecone(PINECONE_API_KEY)
-if index_name not in pc.list_indexes().names():
-    pc.create_index(
-        name=index_name,
-        dimension=384,
-        metric="cosine",
-        spec=ServerlessSpec(
-            cloud='aws',
-            region='us-east-1'
-        )
-    )
 
-#Loading the index
-docsearch = LangchainPinecone.from_texts(
-    texts=[t.page_content for t in text_chunks],
-    embedding=embeddings,
-    index_name=index_name
-)
-
+docsearch= create_docsearch(embeddings, text_chunks, PINECONE_API_KEY, index_name)
 
 PROMPT=PromptTemplate(template=prompt_template, input_variables=["context", "question"])
 

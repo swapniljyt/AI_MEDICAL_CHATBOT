@@ -1,6 +1,7 @@
 import pinecone
 from langchain_community.vectorstores import Pinecone as LangchainPinecone
 from pinecone import ServerlessSpec
+from pinecone import Pinecone, ServerlessSpec
 
 def create_docsearch(embedding, text_chunks, api_key, index_name):
     # Initialize Pinecone

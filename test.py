@@ -4,6 +4,7 @@ from langchain.vectorstores import Pinecone
 from langchain.vectorstores import Pinecone as LangchainPinecone
 import pinecone
 from pinecone import Pinecone, ServerlessSpec
+
 from dotenv import load_dotenv
 import os
 
