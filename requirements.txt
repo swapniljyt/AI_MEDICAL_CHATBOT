@@ -8,4 +8,5 @@ pypdf
 GPT4All
 python-dotenv
 ipykernel
--e .
+
+-e .  #this will explore the local packages like (src) using the setup.py file 
