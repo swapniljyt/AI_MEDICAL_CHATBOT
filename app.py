@@ -14,29 +14,45 @@ app = Flask(__name__)
 load_dotenv()
 
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
-PINECONE_API_ENV = os.environ.get('PINECONE_API_ENV')
-
 
 embeddings = download_hugging_face_embeddings()
 
 #Initializing the Pinecone
-pinecone.init(api_key=PINECONE_API_KEY,
-              environment=PINECONE_API_ENV)
-
-index_name="medical-bot"
+index_name = "medical-chatbot"
+pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+if index_name not in pc.list_indexes().names():
+    pc.create_index(
+        name=index_name,
+        dimension=384,
+        metric="cosine",
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-east-1'
+        )
+    )
 
 #Loading the index
-docsearch=Pinecone.from_existing_index(index_name, embeddings)
+docsearch = LangchainPinecone.from_texts(
+    texts=[t.page_content for t in text_chunks],
+    embedding=embeddings,
+    index_name=index_name
+)
 
 
 PROMPT=PromptTemplate(template=prompt_template, input_variables=["context", "question"])
 
 chain_type_kwargs={"prompt": PROMPT}
 
-llm=CTransformers(model="model/llama-2-7b-chat.ggmlv3.q4_0.bin",
-                  model_type="llama",
-                  config={'max_new_tokens':512,
-                          'temperature':0.8})
+llm = CTransformers(
+    model="/root/src/AI_MEDICAL_CHATBOT/model/llama-2-7b-chat.ggmlv3.q4_0.bin",
+    model_type="llama",
+    config={
+        'max_new_tokens': 100,  # Lowered from 512 for faster response
+        'temperature': 0.7,  # Slightly reduced temperature
+        'top_p': 0.9,
+        'repetition_penalty': 1.0
+    }
+)
 
 
 qa=RetrievalQA.from_chain_type(
