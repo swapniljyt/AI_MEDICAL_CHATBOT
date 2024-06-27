@@ -30,17 +30,10 @@ PROMPT=PromptTemplate(template=prompt_template, input_variables=["context", "que
 
 chain_type_kwargs={"prompt": PROMPT}
 
-llm = CTransformers(
-    model="/root/src/AI_MEDICAL_CHATBOT/model/llama-2-7b-chat.ggmlv3.q4_0.bin",
-    model_type="llama",
-    config={
-        'max_new_tokens': 100,  # Lowered from 512 for faster response
-        'temperature': 0.7,  # Slightly reduced temperature
-        'top_p': 0.9,
-        'repetition_penalty': 1.0
-    }
-)
-
+from langchain.llms import CTransformers
+config = {'max_new_tokens': 256, 'repetition_penalty': 1.1, 'context_length': 4000, 'temperature':0, 'gpu_layers':40}
+llm = CTransformers(model="/root/src/AI_MEDICAL_CHATBOT/model/llama-2-7b-chat.ggmlv3.q4_0.bin", 
+                    model_type = "llama", gpu_layers=40, config=config)
 
 qa=RetrievalQA.from_chain_type(
     llm=llm, 

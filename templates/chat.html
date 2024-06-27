@@ -52,7 +52,7 @@
             const str_time = hour + ":" + minute;
             var rawText = $("#text").val();
 
-            var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + rawText + '<span class="msg_time_send">' + str_time + '</span></div><div class="img_cont_msg"><img src="static/images/asbot.jpg" class="rounded-circle user_img_msg"></div></div>';
+            var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + rawText + '<span class="msg_time_send">' + str_time + '</span></div><div class="img_cont_msg"><img src="static/images/users.png" class="rounded-circle user_img_msg"></div></div>';
 
             $("#text").val(""); // Clear input field after submitting message
             $("#messageFormeight").append(userHtml); // Append user message to chat window
@@ -60,7 +60,7 @@
             // Send message to Flask backend via AJAX
             $.ajax({
                 type: "POST",
-                url: "https://c568-34-83-235-108.ngrok-free.app/proxy/8080/get", // Replace with your ngrok URL
+                url: "https://b4f7-35-221-244-116.ngrok-free.app/proxy/8080/get", // Replace with your ngrok URL
                 data: {
                     msg: rawText,
                 },
